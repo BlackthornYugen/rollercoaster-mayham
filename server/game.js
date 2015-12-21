@@ -3,29 +3,24 @@
  */
 var util = require("util"),
     io = require("socket.io")(),
-    port = process.env.WEBSOCKET_PORT || 8000,
-    players = [];
+    port = process.env.PORT || process.env.WEBSOCKET_PORT || 8000;
+
+var Player = require('./Player.js');
+var match = new (require('./Match.js'))();
 
 io.on('connection', onClientConnect);
 
 function onClientConnect(client) {
-    players.push(client);
+    var player = new Player(client);
+    match.addPlayer(new Player(client));
     client.on("disconnect", onClientDisconnect);
-    util.log("Player has connected: %s", this.id);
-
-    var ns = io.of("/");
-    for(x in ns.connected) {
-        var player = ns.connected[x];
-        if(player.id !== client.id) {
-            var response = getPlayerHash(client.id);
-            response.isNew = true;
-            player.emit("newPlayer", response);
-        }
-    }
+    util.log("%s connected", client.id);
 }
 
 function onClientDisconnect(client) {
-    util.log("Player has disconnected: %s", this.id)
+    util.log("%s disconnected", this.id)
 };
 
+
 io.listen(port);
+util.log("Hosted on port %s!", port);
