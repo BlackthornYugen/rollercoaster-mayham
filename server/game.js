@@ -6,13 +6,14 @@ var util = require("util"),
     port = process.env.PORT || process.env.WEBSOCKET_PORT || 8000;
 
 var Player = require('./Player.js');
-var match = new (require('./Match.js'))();
+var match = new (require('./Match.js'))(io);
 
 io.on('connection', onClientConnect);
 
 function onClientConnect(client) {
     var player = new Player(client);
-    match.addPlayer(new Player(client));
+    player.match = match;
+    match.addPlayer(player);
     client.on("disconnect", onClientDisconnect);
     util.log("%s connected", client.id);
 }
