@@ -11,7 +11,7 @@ function Player(socket) {
   socket.on('draw', ack => {
     var card = new Card();
     this.cards.push(card);
-    ack(card);
+    ack(card.paths);
   });
   
   socket.on('play', (cardIndex, x, y) => {
@@ -26,7 +26,11 @@ function Player(socket) {
     }
   });
 
-  socket.on('getHand', ack => this.cards.map(x => ack(x.paths)));
+  socket.on('getHand', ack => {
+    var cardPathsArray = [];
+    this.cards.map(x => cardPathsArray.push(x.paths));
+    ack(cardPathsArray);
+  });
 }
 
 Player.prototype.getID = function() {
