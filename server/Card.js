@@ -1,3 +1,5 @@
+var util = require("util");
+
 // Constructor
 function Card(paths) {
   this.paths = expandPath(paths || [5,4,7,6]); // All straight lines
@@ -11,9 +13,14 @@ Card.prototype.travelPath = function(entryPoint) {
     }
   }
 
-  throw "No Path";
+  util.error("No path found");
 };
 
+/**
+ * Get the expanded path by making exit/entry points match
+ * @param path The path to expand
+ * @returns {*} The path array with matching entry/exit points
+ */
 function expandPath(path) {
   for(var i = 0; i < path.length; i++) {
     if (path[i] && !path[path[i]]) {
@@ -22,6 +29,36 @@ function expandPath(path) {
   }
   return path;
 }
+
+/**
+ * Get the vector from a positio on a tile
+ * @param z The index representing a position on a tile
+ * @returns {{x: number, y: number}}
+ */
+function getDirection(z) {
+  var x = 0; y = 0;
+  switch (z) {
+    case 0:
+    case 1:
+      x = -1;
+    case 2:
+    case 3:
+      y = 1;
+    case 4:
+    case 5:
+      x = 1;
+    case 6:
+    case 7:
+      y = -1;
+    default:
+      util.error("Direction not found");
+  }
+
+  return {x: x, y: y};
+}
+
+Card.expandPath = expandPath;
+Card.getDirection = getDirection; // expose as class functions
 
 /*  Explanation of path arrays:
 

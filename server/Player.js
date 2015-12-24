@@ -5,6 +5,7 @@ var util = require("util");
 function Player(socket) {
   this.socket = socket;
   this.name = "";
+  this.location = {x: 0, y:0, z: 0}; // z refers to the position on the tile
   this.cards = [new Card(), new Card(), new Card()]; // Start with 3 cards
   this.match = null;
   
