@@ -2,17 +2,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="https://rollercoaster-mayham-blackthorn.c9users.io/socket.io/socket.io.js"></script>
-  <meta charset="utf-8">
-<meta name="robots" content="noindex">
-  <title>Rollercoaster Client</title>
+    <script src="http://localhost:8000/socket.io/socket.io.js"></script>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <style>
+        td {
+            background: aliceblue;
+            width: 20%;
+            border: 1px solid black;
+            height: 100px;
+            text-align: center;
+        }
+        table {width: 100%;}
+    </style>
+    <title>Rollercoaster Client</title>
 </head>
 <body>
 <script>
-var socket = io('https://rollercoaster-mayham-blackthorn.c9users.io/');
-socket.on('turn', function (card, x, y) {
-  console.log("A card was played at %s, %s", x, y);
-});
+    var socket = io('http://localhost:8000');
+
+    function log(message) {
+        console.log(message);
+        //document.write("<h1>" + message + "</h1>");
+    }
+
+    socket.on('onTurn', function (cardPaths, x, y) {
+        log("A card was played at %s, %s".replace("%s", x).replace("%s", y));
+        var query = 'tr:nth-child(%row%) td:nth-child(%column%)';
+        document.querySelector(query.replace("%row%", y+1).replace("%column%", x+1)).innerText = cardPaths;
+    });
+
+    socket.on('message', function (message) {
+        log(message);
+    });
 </script>
+<table>
+    <h1>Rollercoaster Client</h1>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+</table>
 </body>
 </html>

@@ -12,13 +12,25 @@ function Match(server) {
   }
 }
 
+/**
+ * Add a player to the game
+ * @param player
+ */
 Match.prototype.addPlayer = function(player) {
   this.players.push(player);
-}
+};
 
-Match.prototype.playCard = function(player, card, x, y) {
-  this.board[x][y] = card;
-  this.server.emit('onTurn', 'player', x, y);
-}
+/**
+ * Play a card
+ * @param player The player playing the card
+ * @param cardPaths The path array from a card
+ * @param x The number of spaces right of origin (bottom left)
+ * @param y The number of spaces above origin (bottom left)
+ */
+Match.prototype.playCard = function(player, cardPaths, x, y) {
+  this.board[x][y] = cardPaths;
+  this.server.emit('onTurn', cardPaths, x, y);
+};
+
 // export the class
 module.exports = Match;

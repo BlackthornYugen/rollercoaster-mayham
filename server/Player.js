@@ -8,23 +8,25 @@ function Player(socket) {
   this.cards = [new Card(), new Card(), new Card()]; // Start with 3 cards
   this.match = null;
   
-  socket.on('draw', function() {
-      this.cards.push(new Card());
+  socket.on('draw', ack => {
+    var card = new Card();
+    this.cards.push(card);
+    ack(card);
   });
   
   socket.on('play', (cardIndex, x, y) => {
-    var card = this.match.board[x][y] = this.cards.splice(cardIndex, 1);
-    this.match.playCard(this, card, x, y);
-    util.log("%s played card at %s:%s", this.name, x, y);
+    if (this.cards.length < cardIndex + 1) {
+      this.socket.emit('message', 'Card not found.');
+    } else if (this.match.board[x][y]) {
+      this.socket.emit('message', 'You may not play a card there');
+    } else {
+      var card = this.match.board[x][y] = this.cards.splice(cardIndex, 1)[0];
+      this.match.playCard(this, card.paths, x, y);
+      util.log("%s played card at %s:%s", this.getID(), x, y);
+    }
   });
-  
-  socket.on('getHand', function(ack) {
-    ack(this.cards);
-  });
-}
 
-Player.prototype.getName = function() {
-  return this.name;
+  socket.on('getHand', ack => this.cards.map(x => ack(x.paths)));
 }
 
 Player.prototype.getID = function() {
